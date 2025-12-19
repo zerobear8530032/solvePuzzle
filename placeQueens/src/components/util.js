@@ -323,7 +323,6 @@ export function paintGridOptimize(grid) {
     for (let i = 0; i < painted.length; i++) {
         for (let j = 0; j < painted[0].length; j++) {
             if ((grid[i] & (1<<j))!=0) {
-                console.log(`row : ${i} , col ${j}`);
                 painted[i][j] = curr;
                 paintOptimize(i, j, painted, grid,Math.floor(Math.sqrt(painted.length)), curr);
                 curr++;
@@ -365,7 +364,6 @@ export function paintOptimize(r, c, painted, queens, depth, color) {
     }
 }
 export function expandPaintOptimize(grid, queenMap) {
-    const positionMap = new Map();
     const queue = [];
     for (let r = 0; r < grid.length; r++) {
         for (let c = 0; c < grid[0].length; c++) {
@@ -387,50 +385,20 @@ export function expandPaintOptimize(grid, queenMap) {
         }
         if (row + 1 < grid.length && col < grid[0].length && col >= 0 && grid[row + 1][col] === 0) {
             const key = `${row + 1},${col}`;
-            if (positionMap.has(key)) {
-                positionMap.get(key).add(color);
-            } else {
-                const set = new Set();
-                set.add(color);
-                positionMap.set(key, set);
-            }
             queue.push([row + 1, col, color]);
         }
         if (row - 1 >= 0 && col < grid[0].length && col >= 0 && grid[row - 1][col] === 0) {
             const key = `${row - 1},${col}`;
-            if (positionMap.has(key)) {
-                positionMap.get(key).add(color);
-            } else {
-                const set = new Set();
-                set.add(color);
-                positionMap.set(key, set);
-            }
             queue.push([row - 1, col, color]);
         }
         if (col + 1 < grid[0].length && row < grid.length && row >= 0 && grid[row][col + 1] === 0) {
-            const key = `${row},${col + 1}`;
-            if (positionMap.has(key)) {
-                positionMap.get(key).add(color);
-            } else {
-                const set = new Set();
-                set.add(color);
-                positionMap.set(key, set);
-            }
             queue.push([row, col + 1, color]);
         }
         if (col - 1 >= 0 && row < grid[0].length && row >= 0 && grid[row][col - 1] === 0) {
-            const key = `${row},${col - 1}`;
-            if (positionMap.has(key)) {
-                positionMap.get(key).add(color);
-            } else {
-                const set = new Set();
-                set.add(color);
-                positionMap.set(key, set);
-            }
             queue.push([row, col - 1, color]);
         }
     }
-    return positionMap;
+    return grid;
 }
 export function combineGridOptimize(solution, paint, COLOR_MAP) {
     const finalGrid = [];
@@ -438,7 +406,7 @@ export function combineGridOptimize(solution, paint, COLOR_MAP) {
         finalGrid.push([]);
         for (let col = 0; col < paint[0].length; col++) {
             const color = paint[row][col];
-            const cell_data = { value: (solution[row] & (1<<col))!==0 ? "Q" : "", color: COLOR_MAP[color] };
+            const cell_data = { value:"", color: COLOR_MAP[color] };
             finalGrid[row].push(cell_data);
         }
     }
@@ -447,11 +415,11 @@ export function combineGridOptimize(solution, paint, COLOR_MAP) {
 
 
 
-const solutions=placeQueensOptimize(25);
-const solution= choose(solutions);
-const paintedGrid=paintGridOptimize(solution);
-const completePaintedGrid = expandPaintOptimize(paintedGrid,solution);
+// const solutions=placeQueensOptimize(25);
+// const solution= choose(solutions);
+// const paintedGrid=paintGridOptimize(solution);
+// const completePaintedGrid = expandPaintOptimize(paintedGrid,solution);
 // console.log(solution);
 // console.log(paintedGrid);
-const finalGrid =combineGridOptimize(solution,paintedGrid,COLOR_MAP);
-console.log(finalGrid);
+// const finalGrid =combineGridOptimize(solution,paintedGrid,COLOR_MAP);
+// console.log(finalGrid);
