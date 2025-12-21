@@ -1,16 +1,18 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 import ColorPallet from "./ColorPallet";
 import Cell from "./Cell";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { COLOR_MAP, combineGridOptimize, expandPaintOptimize, paintGridOptimize, placeQueensOptimize } from "./util";
-
+import HelpModal from "./HelpModal";
+import { ArrowLeft } from "lucide-react";
+import Timer from "./Timer";
 
 function Board() {
   const boardSize = useParams("size");
   const [defaultGrid, setdefaultGrid] = useState([[]]);
   const [grid, setGrid] = useState(defaultGrid);
-  const [color, setColor] = useState("#0000");
+  const [isWinner, setIsWinner] = useState(false);
   const [queenColorMap, setQueenColorMap] = useState(new Map());
   const [rowMap, setRowMap] = useState(new Map());
   const [columnMap, setColumnMap] = useState(new Map());
@@ -69,7 +71,7 @@ function Board() {
 
   useEffect(() => {
     try {
-      const size = boardSize ? Number(boardSize.size)>25  ||  Number(boardSize.size)<4 ? 4: Number(boardSize.size)  : 0;
+      const size = boardSize ? Number(boardSize.size) > 25 || Number(boardSize.size) < 4 ? 4 : Number(boardSize.size) : 0;
       const solutions = placeQueensOptimize(size);
       const solution = choose(solutions);
       const paintedGrid = paintGridOptimize(solution);
@@ -131,7 +133,8 @@ function Board() {
   useEffect(() => {
     if (isWin()) {
       alert("You WON ");
-    }
+     }
+    console.log(timeRef);
   }, [grid]);
 
   function isWin() {
@@ -148,32 +151,49 @@ function Board() {
     );
   }
 
-  const changeColor = (color) => {
-    setColor(color);
-  };
-
   const resetGrid = () => {
     setGrid(defaultGrid);
+    setIsWinner(false);
+    setQueenColorMap(new Map());
+    setLeftDiagonal(new Map());
+    setRightDiagonal(new Map());
+    setRowMap(new Map());
+    setColumnMap(new Map());
   };
+  const navigate = useNavigate();
+  const handleBack = () => {
+    navigate(-1);
+  }
 
+  const timeRef = useRef(0);
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-8">
       <div className="max-w-4xl w-full">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 mb-2">
-            Queens Puzzle
-          </h1>
-          <p className="text-slate-400 text-sm">
-            Place queens without conflicts
-          </p>
+        <div className="flex justify-between">
+          <button
+            onClick={handleBack}
+            className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors duration-300 group"
+          >
+            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" />
+            <span className="text-sm font-medium">Back</span>
+          </button>
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 mb-2">
+              Queens Puzzle
+            </h1>
+            <p className="text-slate-400 text-sm">
+              Place queens without conflicts
+            </p>
+          </div>
+          <HelpModal />
         </div>
 
         {/* Board Container */}
-        <div className="relative flex justify-center items-center">
+        <div className="relative flex justify-center items-center flex-col gap-5">
+          <Timer timeRef={timeRef} stopTime={isWinner} />
           {/* Glow effect behind board */}
           <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-pink-500/20 blur-3xl rounded-3xl"></div>
-
           {/* Board */}
           <div className="relative bg-slate-800/50 backdrop-blur-xl rounded-2xl p-6 border-2 border-white/10 shadow-2xl">
             <div className="board inline-block">
@@ -196,7 +216,7 @@ function Board() {
                       return (
                         <Cell
                           key={col}
-                          color={color}
+                          color={data.color}
                           isError={isError}
                           setLeftDiagonal={setLeftDiagonal}
                           setRightDiagonal={setRightDiagonal}
