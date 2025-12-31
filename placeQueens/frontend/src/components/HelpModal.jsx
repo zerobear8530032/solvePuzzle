@@ -1,9 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { HelpCircle, X, Crown, Palette, Grid3x3, CheckCircle } from 'lucide-react';
 
-function HelpModal() {
+function HelpModal({ timeRef }) {
   const [isOpen, setIsOpen] = useState(false);
-
+  useEffect(() => {
+    if (isOpen) {
+      timeRef.current.stopTimer(true);
+    } else {
+      timeRef.current.startTimer();
+    }
+  }, [isOpen])
   const rules = [
     {
       icon: Crown,
@@ -39,7 +45,7 @@ function HelpModal() {
         className=" z-40 w-12 h-12 rounded-[999px] pl-16 pr-16 pt-4 pb-4 bg-gradient-to-br from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg hover:shadow-purple-500/50 transition-all duration-300 hover:scale-110 flex items-center justify-center group"
         aria-label="Help"
       >
-        Rules 
+        Rules
       </button>
 
       {/* Modal Overlay */}

@@ -8,7 +8,7 @@ export default function PuzzleGameMenu() {
   const [screen, setScreen] = useState('difficulty'); // 'difficulty' or 'size'
   const [selectedDifficulty, setSelectedDifficulty] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
-  
+
   const difficulties = [
     {
       id: 'easy',

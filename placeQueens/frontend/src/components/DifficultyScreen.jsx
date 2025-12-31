@@ -30,7 +30,6 @@ export default function DifficultyScreen({ difficulties, onSelect }) {
         {difficulties.map((difficulty) => {
           const Icon = difficulty.icon;
           const isHovered = hoveredDifficulty === difficulty.id;
-          
           return (
             <button
               key={difficulty.id}
