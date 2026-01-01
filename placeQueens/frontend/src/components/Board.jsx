@@ -8,8 +8,10 @@ import HelpModal from "./HelpModal";
 import { ArrowLeft } from "lucide-react";
 import Timer from "./Timer";
 
+
 function Board() {
   const boardSize = useParams("size");
+  const mode = useParams("difficulty");
   const [defaultGrid, setdefaultGrid] = useState([[]]);
   const [grid, setGrid] = useState(defaultGrid);
   const [queenColorMap, setQueenColorMap] = useState(new Map());
@@ -91,11 +93,10 @@ function Board() {
       timeRef.current.stopTimer();
       const curr_seconds = timeRef.current.getCurrentTime();
       const username = prompt("You Won Enter Your Name Here !");
-
-      console.log(curr_seconds, username);
+      const storeData=async ()=>await storeUserScore(username,curr_seconds,mode.difficulty,boardSize.size)
+      storeData();
       navigate("/")
     }
-    console.log(timeRef);
   }, [grid]);
 
 
@@ -128,7 +129,30 @@ function Board() {
     navigate(-1);
   }
 
+  async function storeUserScore(username, seconds, difficulty, boardSize) {
+    try {
+      const user_Data = { name: username, seconds: seconds, difficulty: difficulty, boardSize: boardSize };
+      const response_json = await fetch("http://localhost:8000/scores", {
+        method: "POST", headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(user_Data),
+      });
+      const response = await response_json.json();
+      if (response.status === "success") {
+        
+        alert("Your Score Added");
+      } else {
+        alert("Some thin went wrong");
+        throw new error();
+      }
+    } catch (err) {
+      alert(err);
+    }
+    return response;
+  }
   const timeRef = useRef();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-8">
       <div className="max-w-4xl w-full">

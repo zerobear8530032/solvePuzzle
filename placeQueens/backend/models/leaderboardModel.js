@@ -4,6 +4,8 @@ const schemaCreator = mongoose.Schema;
 const leaderboardSchema= new schemaCreator({
     name:{type:String , require:true},
     seconds: {type: Number,require:true},
+    difficulty:{type:String, require:true},
+    boardSize:{type:Number,require:true},
     date : {type:Date, default:new Date()}
 });
 
